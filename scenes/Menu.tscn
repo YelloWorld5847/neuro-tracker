@@ -1,0 +1,190 @@
+[gd_scene load_steps=3 format=3 uid="uid://bylcvi36461tn"]
+
+[ext_resource type="Script" uid="uid://b4uvqrthh1q3" path="res://scripts/Menu.gd" id="1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xdvgc"]
+bg_color = Color(0.05197096, 0.051970966, 0.051970914, 1)
+
+[node name="Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.04, 0.04, 0.08, 1)
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.15
+anchor_right = 0.5
+anchor_bottom = 0.15
+offset_left = -300.0
+offset_top = -40.0
+offset_right = 300.0
+offset_bottom = 40.0
+theme_override_colors/font_color = Color(0.9, 0.85, 0.1, 1)
+theme_override_font_sizes/font_size = 52
+text = "NEURO TRACKER"
+horizontal_alignment = 1
+
+[node name="SubTitle" type="Label" parent="."]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.28
+anchor_right = 0.5
+anchor_bottom = 0.28
+offset_left = -200.0
+offset_top = -20.0
+offset_right = 200.0
+offset_bottom = 20.0
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 0.8)
+theme_override_font_sizes/font_size = 20
+text = "Entraîne ta mémoire visuelle"
+horizontal_alignment = 1
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.4
+anchor_right = 0.5
+anchor_bottom = 0.4
+offset_left = -150.0
+offset_right = 150.0
+offset_bottom = 180.0
+theme_override_constants/separation = 20
+
+[node name="PlayButton" type="Button" parent="VBox"]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "▶  JOUER"
+
+[node name="SettingsButton" type="Button" parent="VBox"]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "PARAMÈTRES"
+
+[node name="QuitButton" type="Button" parent="VBox"]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "QUITTER"
+
+[node name="SettingsPanel" type="Panel" parent="."]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -280.0
+offset_right = 280.0
+offset_bottom = 280.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_xdvgc")
+
+[node name="VBox" type="VBoxContainer" parent="SettingsPanel"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+theme_override_constants/separation = 14
+
+[node name="SettingsTitle" type="Label" parent="SettingsPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.85, 0.1, 1)
+theme_override_font_sizes/font_size = 24
+text = "PARAMÈTRES"
+horizontal_alignment = 1
+
+[node name="BallsRow" type="HBoxContainer" parent="SettingsPanel/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SettingsPanel/VBox/BallsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 17
+text = "Nombre de balles :"
+
+[node name="SpinBox" type="SpinBox" parent="SettingsPanel/VBox/BallsRow"]
+layout_mode = 2
+min_value = 4.0
+max_value = 16.0
+value = 8.0
+
+[node name="TargetsRow" type="HBoxContainer" parent="SettingsPanel/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SettingsPanel/VBox/TargetsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 17
+text = "Balles à mémoriser :"
+
+[node name="SpinBox" type="SpinBox" parent="SettingsPanel/VBox/TargetsRow"]
+layout_mode = 2
+min_value = 1.0
+max_value = 6.0
+value = 2.0
+
+[node name="ShowRow" type="HBoxContainer" parent="SettingsPanel/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SettingsPanel/VBox/ShowRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 17
+text = "Durée mémorisation (s) :"
+
+[node name="SpinBox" type="SpinBox" parent="SettingsPanel/VBox/ShowRow"]
+layout_mode = 2
+min_value = 1.0
+max_value = 10.0
+step = 0.5
+value = 3.0
+
+[node name="MoveRow" type="HBoxContainer" parent="SettingsPanel/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SettingsPanel/VBox/MoveRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 17
+text = "Durée mouvement (s) :"
+
+[node name="SpinBox" type="SpinBox" parent="SettingsPanel/VBox/MoveRow"]
+layout_mode = 2
+min_value = 2.0
+max_value = 15.0
+step = 0.5
+value = 5.0
+
+[node name="RoundsRow" type="HBoxContainer" parent="SettingsPanel/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SettingsPanel/VBox/RoundsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 17
+text = "Nombre de manches :"
+
+[node name="SpinBox" type="SpinBox" parent="SettingsPanel/VBox/RoundsRow"]
+layout_mode = 2
+min_value = 3.0
+max_value = 20.0
+value = 10.0
+
+[node name="CloseButton" type="Button" parent="SettingsPanel/VBox"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "✓ ENREGISTRER"
