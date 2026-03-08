@@ -1,79 +1,129 @@
-# NeuroTrackerX — Guide d'installation Godot 4
+# NeuroTrackerX
 
-## Structure du projet
-```
-neurotracker/
-├── project.godot          ← Configuration principale
-├── scenes/
-│   ├── Menu.tscn          ← Scène du menu principal
-│   └── GameScene.tscn     ← Scène de jeu 3D
-├── scripts/
-│   ├── GameManager.gd     ← Autoload : état global du jeu
-│   ├── Ball.gd            ← Comportement des balles
-│   ├── GameScene.gd       ← Logique principale des phases
-│   └── Menu.gd            ← Logique du menu
-```
-
-## Installation
-
-### 1. Prérequis
-- Godot 4.2+ (télécharger sur https://godotengine.org)
-- Fonctionne sur Raspberry Pi 4 avec Godot 4 ARM
-
-### 2. Ouvrir le projet
-1. Lancer Godot
-2. "Import" → sélectionner le dossier `neurotracker/`
-3. Ouvrir `project.godot`
-
-### 3. Vérifier l'Autoload
-Dans **Projet > Paramètres du projet > Autoload** :
-- Vérifier que `GameManager` pointe vers `res://scripts/GameManager.gd`
-- Si absent : cliquer "+", chemin = `res://scripts/GameManager.gd`, nom = `GameManager`
-
-### 4. Lancer le jeu
-- Appuyer sur **F5** ou le bouton ▶
+Jeu de mémoire visuelle 3D développé avec Godot 4.
+Des balles de tennis rebondissent dans une boîte transparente — tu dois retenir lesquelles étaient surlignées au départ.
 
 ---
 
-## Phases de jeu
+## Structure du projet
 
 ```
-MÉMORISATION (3s)
-  ↓ Les balles cibles sont surlignées en jaune vif + lumière pulsante
-MOUVEMENT (5s)
-  ↓ Toutes les balles deviennent identiques et bougent dans la boîte
-ROTATION CAMÉRA (4s)
-  ↓ La caméra tourne autour de la boîte — les balles sont immobiles
-SÉLECTION
-  ↓ L'utilisateur tape les balles + confirme
-RÉSULTAT (3s)
-  ↓ Vert = bonne balle, Rouge = mauvaise sélection
-MANCHE SUIVANTE...
+neurotracker/
+├── project.godot
+├── scenes/
+│   ├── Menu.tscn
+│   └── GameScene.tscn
+├── scripts/
+│   ├── GameManager.gd     (Autoload)
+│   ├── Ball.gd
+│   ├── GameScene.gd
+│   └── Menu.gd
 ```
 
-## Paramètres configurables (menu Options)
-| Paramètre | Défaut | Description |
-|-----------|--------|-------------|
-| Nombre de balles | 8 | Total dans la boîte |
-| Balles à mémoriser | 2 | Cibles à retenir |
-| Durée mémorisation | 3s | Temps d'affichage des cibles |
-| Durée mouvement | 5s | Temps de déplacement |
-| Nombre de manches | 10 | Parties par session |
+---
 
-## Système de difficulté
-- **Victoire** → vitesse +0.2 (max 3.0)
-- **Défaite** → vitesse -0.15 (min 0.5)
-- La vitesse est affichée en haut à gauche
-- Score final = manches gagnées / total
+## Lancer le projet en dev
 
-## Optimisation Raspberry Pi 4
-- Pas de shadows activées
-- Glow léger (pas de SDFGI)
-- Balles en SpheresMesh simples
-- Résolution cible : 1280×720
+1. Godot 4.2+ — https://godotengine.org
+2. Import → sélectionner le dossier `neurotracker/`
+3. Vérifier dans **Projet > Paramètres > Autoload** que `GameManager` pointe vers `res://scripts/GameManager.gd`
+4. F5 pour lancer
 
-## Contrôles tactiles
-- **Tap sur une balle** → la sélectionne/désélectionne (en bleu)
-- **Bouton CONFIRMER** → valide la sélection
-- **Bouton PAUSE** → met le jeu en pause
-- **Bouton ⬅ MENU** → retour au menu principal
+---
+
+## Installer sur Raspberry Pi 4 avec écran tactile
+
+C'est la config principale pour laquelle le jeu a été pensé.
+
+### Ce qu'il faut
+
+- Raspberry Pi 4 (2Go RAM minimum, 4Go recommandé)
+- Raspberry Pi OS 64 bits (Bookworm de préférence)
+- Écran tactile officiel 7" ou compatible DSI/HDMI
+- Godot 4 ARM64 — télécharger le build Linux ARM64 sur godotengine.org
+
+### Exporter depuis Godot
+
+Dans **Projet > Exporter**, créer un export Linux avec ces paramètres :
+- Architecture : `arm64`
+- Intégrer PCK : coché
+- S3TC BPTC : décoché
+- ETC2 ASTC : coché
+- Pré-calculateur de shader : coché (évite des freezes au premier lancement)
+
+Avant d'exporter, activer ETC2/ASTC dans **Projet > Paramètres > Rendu > Textures**.
+
+### Copier sur le Pi
+
+```bash
+scp NeuroTrackerX.arm64 pi@<ip_du_pi>:~/Desktop/
+```
+
+Ou clé USB, ça marche aussi.
+
+### Premier lancement
+
+```bash
+chmod +x ~/Desktop/NeuroTrackerX.arm64
+./Desktop/NeuroTrackerX.arm64
+```
+
+### Lancer automatiquement au démarrage
+
+Créer le fichier suivant :
+
+```
+~/.config/autostart/neurotracker.desktop
+```
+
+Avec ce contenu :
+
+```ini
+[Desktop Entry]
+Type=Application
+Name=NeuroTrackerX
+Exec=/home/pi/Desktop/NeuroTrackerX.arm64
+```
+
+Le jeu se lance tout seul après le boot, sans avoir à ouvrir un terminal.
+
+### Écran tactile
+
+Le jeu supporte nativement le tactile — tap sur une balle pour la sélectionner.
+Si l'écran est à l'envers ou mal orienté, ajouter dans `/boot/config.txt` :
+
+```
+display_rotate=2
+```
+
+Pour un écran officiel Pi 7" branché en DSI, aucune config supplémentaire normalement.
+
+### Paramètres sauvegardés
+
+Les paramètres (nombre de balles, durée, etc.) sont sauvegardés dans :
+```
+~/.local/share/NeuroTrackerX/settings.cfg
+```
+Ils persistent entre les lancements, pas besoin de reconfigurer à chaque fois.
+
+### Si les perfs sont mauvaises
+
+Le jeu tourne en `forward_plus` par défaut. Si c'est trop lourd sur le Pi, changer dans `project.godot` :
+
+```
+renderer/rendering_method="gl_compatibility"
+```
+
+---
+
+## Paramètres du jeu
+
+| Paramètre | Défaut |
+|-----------|--------|
+| Nombre de balles | 8 |
+| Balles à mémoriser | 2 |
+| Durée mémorisation | 3s |
+| Durée mouvement | 5s |
+| Nombre de manches | 10 |
+
+La vitesse augmente si tu gagnes (+0.2) et diminue si tu perds, proportionnellement aux erreurs. Min 0.5, max 3.0.
