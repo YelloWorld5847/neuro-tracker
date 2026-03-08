@@ -1,5 +1,0 @@
-; Autoload entry to add in project.godot manually:
-; [autoload]
-; GameManager="*res://scripts/GameManager.gd"
-;
-; Add this to the [application] section of project.godot

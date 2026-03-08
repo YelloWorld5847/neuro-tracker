@@ -1,6 +1,0 @@
-## PATCH — à coller dans GameScene.gd dans la fonction _ready()
-## Ajoute la gestion du bouton "Retour au menu"
-##
-## Dans _ready(), après la ligne ui_pause_btn.pressed.connect(...), ajoute :
-##
-##   $UI/BackMenuButton.pressed.connect(func(): get_tree().change_scene_to_file("res://scenes/Menu.tscn"))
