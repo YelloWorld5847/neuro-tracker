@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://bylcvi36461tn"]
+[gd_scene format=3 uid="uid://bylcvi36461tn"]
 
 [ext_resource type="Script" uid="uid://b4uvqrthh1q3" path="res://scripts/Menu.gd" id="1"]
 
@@ -9,7 +9,7 @@ background_color = Color(0.04, 0.04, 0.08, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xdvgc"]
 bg_color = Color(0.05197096, 0.051970966, 0.051970914, 1)
 
-[node name="Menu" type="Control"]
+[node name="Menu" type="Control" unique_id=1405041055]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -18,16 +18,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=301871352]
 environment = SubResource("Environment_menu")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1667718454]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.04, 0.04, 0.08, 1)
 
-[node name="TitleLabel" type="Label" parent="."]
+[node name="TitleLabel" type="Label" parent="." unique_id=2019115311]
 layout_mode = 0
 anchor_top = 0.15
 anchor_right = 1.0
@@ -39,7 +39,7 @@ theme_override_font_sizes/font_size = 52
 text = "NEURO TRACKER"
 horizontal_alignment = 1
 
-[node name="SubTitle" type="Label" parent="."]
+[node name="SubTitle" type="Label" parent="." unique_id=1145686752]
 layout_mode = 0
 anchor_top = 0.28
 anchor_right = 1.0
@@ -51,7 +51,7 @@ theme_override_font_sizes/font_size = 20
 text = "Entraîne ta mémoire visuelle"
 horizontal_alignment = 1
 
-[node name="VBox" type="VBoxContainer" parent="."]
+[node name="VBox" type="VBoxContainer" parent="." unique_id=97925558]
 layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.4
@@ -63,25 +63,25 @@ offset_bottom = 200.0
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="PlayButton" type="Button" parent="VBox"]
+[node name="PlayButton" type="Button" parent="VBox" unique_id=964811684]
 custom_minimum_size = Vector2(300, 60)
 layout_mode = 2
 theme_override_font_sizes/font_size = 26
 text = "Jouer"
 
-[node name="SettingsButton" type="Button" parent="VBox"]
+[node name="SettingsButton" type="Button" parent="VBox" unique_id=1434311130]
 custom_minimum_size = Vector2(300, 60)
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "PARAMÈTRES"
 
-[node name="QuitButton" type="Button" parent="VBox"]
+[node name="QuitButton" type="Button" parent="VBox" unique_id=2103347537]
 custom_minimum_size = Vector2(300, 60)
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "QUITTER"
 
-[node name="SettingsPanel" type="Panel" parent="."]
+[node name="SettingsPanel" type="Panel" parent="." unique_id=503881634]
 layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.5
@@ -93,7 +93,7 @@ offset_right = 280.0
 offset_bottom = 280.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_xdvgc")
 
-[node name="VBox" type="VBoxContainer" parent="SettingsPanel"]
+[node name="VBox" type="VBoxContainer" parent="SettingsPanel" unique_id=713621082]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -103,91 +103,91 @@ offset_right = -20.0
 offset_bottom = -20.0
 theme_override_constants/separation = 14
 
-[node name="SettingsTitle" type="Label" parent="SettingsPanel/VBox"]
+[node name="SettingsTitle" type="Label" parent="SettingsPanel/VBox" unique_id=382671943]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.85, 0.1, 1)
 theme_override_font_sizes/font_size = 24
 text = "PARAMÈTRES"
 horizontal_alignment = 1
 
-[node name="BallsRow" type="HBoxContainer" parent="SettingsPanel/VBox"]
+[node name="BallsRow" type="HBoxContainer" parent="SettingsPanel/VBox" unique_id=1756671674]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="SettingsPanel/VBox/BallsRow"]
+[node name="Label" type="Label" parent="SettingsPanel/VBox/BallsRow" unique_id=1153091384]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 17
 text = "Nombre de balles :"
 
-[node name="SpinBox" type="SpinBox" parent="SettingsPanel/VBox/BallsRow"]
+[node name="SpinBox" type="SpinBox" parent="SettingsPanel/VBox/BallsRow" unique_id=648171936]
 layout_mode = 2
 min_value = 4.0
 max_value = 50.0
 value = 8.0
 
-[node name="TargetsRow" type="HBoxContainer" parent="SettingsPanel/VBox"]
+[node name="TargetsRow" type="HBoxContainer" parent="SettingsPanel/VBox" unique_id=1364933100]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="SettingsPanel/VBox/TargetsRow"]
+[node name="Label" type="Label" parent="SettingsPanel/VBox/TargetsRow" unique_id=1057610985]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 17
 text = "Balles à mémoriser :"
 
-[node name="SpinBox" type="SpinBox" parent="SettingsPanel/VBox/TargetsRow"]
+[node name="SpinBox" type="SpinBox" parent="SettingsPanel/VBox/TargetsRow" unique_id=367893689]
 layout_mode = 2
 min_value = 1.0
 max_value = 6.0
 value = 2.0
 
-[node name="ShowRow" type="HBoxContainer" parent="SettingsPanel/VBox"]
+[node name="ShowRow" type="HBoxContainer" parent="SettingsPanel/VBox" unique_id=355436093]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="SettingsPanel/VBox/ShowRow"]
+[node name="Label" type="Label" parent="SettingsPanel/VBox/ShowRow" unique_id=520258706]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 17
 text = "Durée mémorisation (s) :"
 
-[node name="SpinBox" type="SpinBox" parent="SettingsPanel/VBox/ShowRow"]
+[node name="SpinBox" type="SpinBox" parent="SettingsPanel/VBox/ShowRow" unique_id=1107422682]
 layout_mode = 2
 min_value = 1.0
 max_value = 10.0
 step = 0.5
 value = 3.0
 
-[node name="MoveRow" type="HBoxContainer" parent="SettingsPanel/VBox"]
+[node name="MoveRow" type="HBoxContainer" parent="SettingsPanel/VBox" unique_id=1596850266]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="SettingsPanel/VBox/MoveRow"]
+[node name="Label" type="Label" parent="SettingsPanel/VBox/MoveRow" unique_id=1348570509]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 17
 text = "Durée mouvement (s) :"
 
-[node name="SpinBox" type="SpinBox" parent="SettingsPanel/VBox/MoveRow"]
+[node name="SpinBox" type="SpinBox" parent="SettingsPanel/VBox/MoveRow" unique_id=903116572]
 layout_mode = 2
 min_value = 2.0
 max_value = 15.0
 step = 0.5
 value = 5.0
 
-[node name="RoundsRow" type="HBoxContainer" parent="SettingsPanel/VBox"]
+[node name="RoundsRow" type="HBoxContainer" parent="SettingsPanel/VBox" unique_id=881364262]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="SettingsPanel/VBox/RoundsRow"]
+[node name="Label" type="Label" parent="SettingsPanel/VBox/RoundsRow" unique_id=638231640]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 17
 text = "Nombre de manches :"
 
-[node name="SpinBox" type="SpinBox" parent="SettingsPanel/VBox/RoundsRow"]
+[node name="SpinBox" type="SpinBox" parent="SettingsPanel/VBox/RoundsRow" unique_id=417356917]
 layout_mode = 2
 min_value = 3.0
 max_value = 20.0
 value = 10.0
 
-[node name="CloseButton" type="Button" parent="SettingsPanel/VBox"]
+[node name="CloseButton" type="Button" parent="SettingsPanel/VBox" unique_id=1490286011]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
