@@ -15,6 +15,15 @@ extends Control
 @onready var spin_rounds: SpinBox = $SettingsPanel/VBox/RoundsRow/SpinBox
 @onready var btn_close_settings: Button = $SettingsPanel/VBox/CloseButton
 
+# paramètres avancés
+@onready var spin_speed_start: SpinBox = $SettingsPanel/VBox/AdvSpeedStartRow/SpinBox
+@onready var spin_speed_bonus: SpinBox = $SettingsPanel/VBox/AdvSpeedBonusRow/SpinBox
+@onready var spin_speed_max: SpinBox = $SettingsPanel/VBox/AdvSpeedMaxRow/SpinBox
+@onready var spin_speed_min: SpinBox = $SettingsPanel/VBox/AdvSpeedMinRow/SpinBox
+@onready var spin_cam_speed: SpinBox = $SettingsPanel/VBox/AdvCamSpeedRow/SpinBox
+@onready var spin_depth_ratio: SpinBox = $SettingsPanel/VBox/AdvDepthRatioRow/SpinBox
+@onready var spin_result_dur: SpinBox = $SettingsPanel/VBox/AdvResultDurRow/SpinBox
+
 
 func _ready() -> void:
 	btn_play.pressed.connect(_on_play)
@@ -51,7 +60,7 @@ func _adapt_to_screen() -> void:
 	vbox.offset_right = half_w
 
 	var panel_w := int(560 * scale_factor)
-	var panel_h := int(560 * scale_factor)
+	var panel_h := int(700 * scale_factor)
 	settings_panel.set_anchor(SIDE_LEFT, 0.5)
 	settings_panel.set_anchor(SIDE_RIGHT, 0.5)
 	settings_panel.set_anchor(SIDE_TOP, 0.5)
@@ -62,6 +71,7 @@ func _adapt_to_screen() -> void:
 	settings_panel.offset_bottom = panel_h / 2.0
 
 	var lbl_font := int(17 * scale_factor)
+	var adv_lbl_font := int(15 * scale_factor)
 	for row_path in [
 		"SettingsPanel/VBox/BallsRow/Label",
 		"SettingsPanel/VBox/TargetsRow/Label",
@@ -73,6 +83,20 @@ func _adapt_to_screen() -> void:
 		var node := get_node_or_null(row_path)
 		if node:
 			node.add_theme_font_size_override("font_size", lbl_font)
+
+	for row_path in [
+		"SettingsPanel/VBox/AdvancedTitle",
+		"SettingsPanel/VBox/AdvSpeedStartRow/Label",
+		"SettingsPanel/VBox/AdvSpeedBonusRow/Label",
+		"SettingsPanel/VBox/AdvSpeedMaxRow/Label",
+		"SettingsPanel/VBox/AdvSpeedMinRow/Label",
+		"SettingsPanel/VBox/AdvCamSpeedRow/Label",
+		"SettingsPanel/VBox/AdvDepthRatioRow/Label",
+		"SettingsPanel/VBox/AdvResultDurRow/Label",
+	]:
+		var node := get_node_or_null(row_path)
+		if node:
+			node.add_theme_font_size_override("font_size", adv_lbl_font)
 
 
 func _on_play() -> void:
@@ -89,6 +113,13 @@ func _on_close_settings() -> void:
 	GameManager.settings["show_duration"] = spin_show.value
 	GameManager.settings["move_duration"] = spin_move.value
 	GameManager.settings["total_rounds"] = int(spin_rounds.value)
+	GameManager.settings["speed_start"] = spin_speed_start.value
+	GameManager.settings["speed_bonus"] = spin_speed_bonus.value
+	GameManager.settings["speed_max"] = spin_speed_max.value
+	GameManager.settings["speed_min"] = spin_speed_min.value
+	GameManager.settings["cam_speed_scale"] = spin_cam_speed.value
+	GameManager.settings["depth_ratio"] = spin_depth_ratio.value
+	GameManager.settings["result_duration"] = spin_result_dur.value
 	GameManager.save_settings()
 	settings_panel.visible = false
 
@@ -103,3 +134,10 @@ func _load_settings_to_ui() -> void:
 	spin_show.value = GameManager.settings["show_duration"]
 	spin_move.value = GameManager.settings["move_duration"]
 	spin_rounds.value = GameManager.settings["total_rounds"]
+	spin_speed_start.value = GameManager.settings["speed_start"]
+	spin_speed_bonus.value = GameManager.settings["speed_bonus"]
+	spin_speed_max.value = GameManager.settings["speed_max"]
+	spin_speed_min.value = GameManager.settings["speed_min"]
+	spin_cam_speed.value = GameManager.settings["cam_speed_scale"]
+	spin_depth_ratio.value = GameManager.settings["depth_ratio"]
+	spin_result_dur.value = GameManager.settings["result_duration"]

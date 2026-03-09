@@ -38,6 +38,7 @@ func _ready() -> void:
 	ui_pause_btn.pressed.connect(_on_pause_pressed)
 	$UI/BackMenuButton.pressed.connect(func(): get_tree().change_scene_to_file("res://scenes/Menu.tscn"))
 	ui_message.visible = false
+	ui_message.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0))
 	camera.position = Vector3(0.0, 0.0, CAM_DIST)
 	camera.rotation_degrees = Vector3(0.0, 0.0, 0.0)
 	camera_pivot.position = Vector3(0.0, 0.0, 0.0)
@@ -191,8 +192,9 @@ func _start_phase_rotate() -> void:
 	_selected_count = 0
 	_randomize_cam_speed()
 	_set_phase_label("Tourne et selectionne les balles")
-	ui_confirm_btn.visible = true
+	ui_confirm_btn.visible = false
 	ui_confirm_btn.text = "Confirmer (0/%d)" % GameManager.settings["target_balls"]
+	_update_confirm_style(false)
 	ui_timer_bar.visible = false
 	ui_message.visible = false
 	ui_pause_btn.visible = true
@@ -216,9 +218,11 @@ func _start_phase_result(errors: int) -> void:
 	ui_message.visible = true
 	if won:
 		ui_message.text = "Bonne reponse !"
+		ui_message.add_theme_constant_override("outline_size", 10)
 		ui_message.add_theme_color_override("font_color", Color(0.2, 1.0, 0.3))
 	else:
 		ui_message.text = "%d erreur(s) sur %d balles" % [errors, GameManager.settings["target_balls"]]
+		ui_message.add_theme_constant_override("outline_size",10)
 		ui_message.add_theme_color_override("font_color", Color(1.0, 0.3, 0.2))
 	_set_phase_label("")
 	await get_tree().create_timer(3.0).timeout
@@ -243,10 +247,25 @@ func _fade_out_balls() -> void:
 				b._stripe_mat.albedo_color.a = a
 			, 1.0, 0.0, 0.45)
 
-
+func _make_confirm_style(bg: Color, border: Color) -> StyleBoxFlat:
+	var s := StyleBoxFlat.new()
+	s.bg_color = bg
+	s.border_color = border
+	s.border_width_top = 2
+	s.border_width_bottom = 2
+	s.border_width_left = 2
+	s.border_width_right = 2
+	s.corner_radius_top_left = 6
+	s.corner_radius_top_right = 6
+	s.corner_radius_bottom_left = 6
+	s.corner_radius_bottom_right = 6
+	return s
+	
 func _show_final_score() -> void:
 	_current_phase = "gameover"
 	var score := GameManager.get_score()
+	
+	ui_message.add_theme_constant_override("outline_size",10)
 	ui_message.text = "Score : %d / %d  -  Niveau : %.1f" % [
 		score, GameManager.settings["total_rounds"], GameManager.speed_level
 	]
@@ -254,6 +273,11 @@ func _show_final_score() -> void:
 	_set_phase_label("Partie terminee")
 	ui_confirm_btn.visible = true
 	ui_confirm_btn.text = "Rejouer"
+	ui_confirm_btn.add_theme_stylebox_override("normal",   _make_confirm_style(Color(0.15, 0.15, 0.2), Color(0.6, 0.6, 0.8)))
+	ui_confirm_btn.add_theme_stylebox_override("hover",    _make_confirm_style(Color(0.22, 0.22, 0.3), Color(0.7, 0.7, 0.9)))
+	ui_confirm_btn.add_theme_stylebox_override("pressed",  _make_confirm_style(Color(0.10, 0.10, 0.15), Color(0.5, 0.5, 0.7)))
+	ui_confirm_btn.add_theme_stylebox_override("focus",    _make_confirm_style(Color(0.15, 0.15, 0.2), Color(0.6, 0.6, 0.8)))
+	ui_confirm_btn.add_theme_stylebox_override("disabled", _make_confirm_style(Color(0.1, 0.1, 0.12), Color(0.3, 0.3, 0.4)))
 	if ui_confirm_btn.pressed.is_connected(_on_confirm_pressed):
 		ui_confirm_btn.pressed.disconnect(_on_confirm_pressed)
 	ui_confirm_btn.pressed.connect(_on_replay_pressed)
@@ -350,6 +374,32 @@ func _on_ball_tapped(ball_id: int) -> void:
 		GameManager.selected_ball_ids.append(ball_id)
 		_selected_count += 1
 	ui_confirm_btn.text = "Confirmer (%d/%d)" % [_selected_count, target_count]
+	_update_confirm_style(_selected_count == target_count)
+
+
+func _update_confirm_style(ready: bool) -> void:
+	if ready:
+		ui_confirm_btn.add_theme_color_override("font_color", Color(0.05, 0.05, 0.05))
+		ui_confirm_btn.add_theme_stylebox_override("normal", _make_btn_style(Color(0.216, 0.663, 0.293, 1.0)))
+		ui_confirm_btn.add_theme_stylebox_override("hover", _make_btn_style(Color(0.199, 0.577, 0.274, 1.0)))
+		ui_confirm_btn.add_theme_stylebox_override("pressed", _make_btn_style(Color(0.138, 0.673, 0.224, 1.0)))
+		ui_confirm_btn.visible = true
+	else:
+		ui_confirm_btn.remove_theme_color_override("font_color")
+		ui_confirm_btn.remove_theme_stylebox_override("normal")
+		ui_confirm_btn.remove_theme_stylebox_override("hover")
+		ui_confirm_btn.remove_theme_stylebox_override("pressed")
+		ui_confirm_btn.visible = false
+
+
+func _make_btn_style(col: Color) -> StyleBoxFlat:
+	var s := StyleBoxFlat.new()
+	s.bg_color = col
+	s.corner_radius_top_left = 6
+	s.corner_radius_top_right = 6
+	s.corner_radius_bottom_left = 6
+	s.corner_radius_bottom_right = 6
+	return s
 
 
 func _on_confirm_pressed() -> void:
@@ -394,6 +444,7 @@ func _on_replay_pressed() -> void:
 
 func _set_phase_label(text: String) -> void:
 	ui_phase_label.text = text
+	
 
 
 func _update_speed_ui() -> void:

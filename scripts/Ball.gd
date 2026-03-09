@@ -77,8 +77,8 @@ func _ready() -> void:
 func _add_torus_vertical(y_rot: float) -> void:
 	var node := MeshInstance3D.new()
 	var t := TorusMesh.new()
-	t.inner_radius = BALL_RADIUS - 0.02
-	t.outer_radius = BALL_RADIUS + 0.02
+	t.inner_radius = BALL_RADIUS - 0.008
+	t.outer_radius = BALL_RADIUS + 0.008
 	t.rings = 40
 	t.ring_segments = 12
 	node.mesh = t
@@ -90,16 +90,16 @@ func _add_torus_vertical(y_rot: float) -> void:
 func _add_ring(y_pos: float) -> void:
 	var node := MeshInstance3D.new()
 	var c := CylinderMesh.new()
-	c.top_radius    = BALL_RADIUS + 0.005
-	c.bottom_radius = BALL_RADIUS + 0.005
-	c.height        = 0.03
-	c.radial_segments = 32
+	var r: float = sqrt(BALL_RADIUS * BALL_RADIUS - y_pos * y_pos)
+	c.top_radius    = r
+	c.bottom_radius = r
+	c.height        = 0.02
+	c.radial_segments = 96
 	c.rings = 1
 	node.mesh = c
 	node.position.y = y_pos
 	node.material_override = _stripe_mat
 	_visual_root.add_child(node)
-
 
 func setup(id: int, half_extents: Vector3) -> void:
 	ball_id = id

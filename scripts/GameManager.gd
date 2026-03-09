@@ -13,6 +13,13 @@ var settings := {
 	"total_rounds": 10,
 	"base_speed": 1.0,
 	"depth_ratio": 0.35,
+	# paramètres avancés
+	"speed_start": 1.0,
+	"speed_bonus": 0.3,
+	"speed_max": 5.0,
+	"speed_min": 0.5,
+	"cam_speed_scale": 0.5,
+	"result_duration": 3.0,
 }
 
 var current_round: int = 0
@@ -48,11 +55,12 @@ func load_settings() -> void:
 
 func reset_game() -> void:
 	current_round = 0
-	speed_level = 1.0
+	speed_level = settings["speed_start"]
 	rounds_won.clear()
 	target_ball_ids.clear()
 	selected_ball_ids.clear()
 	current_phase = "menu"
+	win_streak = 0
 
 
 func start_round() -> void:
@@ -69,13 +77,13 @@ func record_result_with_errors(won: bool, errors: int) -> void:
 	rounds_won.append(won)
 	if won:
 		set_win_streak(true)
-		speed_level = minf(speed_level + (speed_append * win_streak), 5.0)
+		speed_level = minf(speed_level + (settings["speed_bonus"] * win_streak), settings["speed_max"])
 	else:
 		set_win_streak(false)
 		var target_count: int = settings["target_balls"]
 		var ratio: float = float(errors) / float(max(target_count, 1))
 		var penalty: float = 0.05 + ratio * 0.20
-		speed_level = maxf(speed_level - penalty, 0.5)
+		speed_level = maxf(speed_level - penalty, settings["speed_min"])
 	round_result.emit(won)
 
 
@@ -90,8 +98,9 @@ func is_game_over() -> bool:
 func get_score() -> int:
 	return rounds_won.count(true)
 
-func set_win_streak(result: bool):
-	if result == true:
+
+func set_win_streak(result: bool) -> void:
+	if result:
 		win_streak += 1
 	else:
 		win_streak = 0
