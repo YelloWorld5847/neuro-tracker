@@ -26,7 +26,7 @@ var _cam_pitch_speed: float = 0.0
 
 const BOX_HALF := Vector3(5.0, 4.0, 3.0)
 const CAM_DIST := 13.0
-const CAM_SPEED_SCALE := 0.3
+const CAM_SPEED_SCALE := 0.5
 
 func _ready() -> void:
 	GameManager.reset_game()
