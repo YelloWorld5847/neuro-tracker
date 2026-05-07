@@ -19,6 +19,10 @@ var _current_phase: String = ""
 var _is_paused: bool = false
 var _selected_count: int = 0
 
+var _label_layer: CanvasLayer = null
+var _ball_labels: Array[Button] = []
+const LABEL_SIZE := 50.0
+
 var _cam_yaw: float = 0.0
 var _cam_pitch: float = 0.0
 var _cam_yaw_speed: float = 0.0
@@ -39,6 +43,10 @@ func _ready() -> void:
 	$UI/BackMenuButton.pressed.connect(func(): get_tree().change_scene_to_file("res://scenes/Menu.tscn"))
 	ui_message.visible = false
 	ui_message.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0))
+	ui_message.add_theme_constant_override("outline_size", 8)
+	ui_message.add_theme_font_size_override("font_size", 32)
+	_style_phase_label()
+	_style_speed_label()
 	camera.position = Vector3(0.0, 0.0, CAM_DIST)
 	camera.rotation_degrees = Vector3(0.0, 0.0, 0.0)
 	camera_pivot.position = Vector3(0.0, 0.0, 0.0)
@@ -66,7 +74,7 @@ func _randomize_cam_speed() -> void:
 func _setup_box() -> void:
 	var mat := StandardMaterial3D.new()
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat.albedo_color = Color(0.55, 0.55, 0.6, 0.07)
+	mat.albedo_color = Color(0.45, 0.55, 0.75, 0.06)
 	mat.metallic = 0.0
 	mat.roughness = 0.1
 	mat.emission_enabled = false
@@ -147,6 +155,7 @@ func _find_free_position(used: Array[Vector3], min_dist: float) -> Vector3:
 
 
 func _start_phase_show() -> void:
+	_remove_ball_labels()
 	_current_phase = "show"
 	_cam_yaw = 0.0
 	_cam_pitch = 0.0
@@ -198,6 +207,7 @@ func _start_phase_rotate() -> void:
 	ui_timer_bar.visible = false
 	ui_message.visible = false
 	ui_pause_btn.visible = true
+	_create_ball_labels()
 
 
 func _start_phase_result(errors: int) -> void:
@@ -208,9 +218,13 @@ func _start_phase_result(errors: int) -> void:
 		b.stop_moving()
 	for id in GameManager.target_ball_ids:
 		balls[id].set_state_correct()
+		if id < _ball_labels.size():
+			_set_label_state(_ball_labels[id], "correct")
 	for id in GameManager.selected_ball_ids:
 		if id not in GameManager.target_ball_ids:
 			balls[id].set_state_wrong()
+			if id < _ball_labels.size():
+				_set_label_state(_ball_labels[id], "wrong")
 	var won: bool = (errors == 0)
 	GameManager.record_result_with_errors(won, errors)
 	_update_rounds_ui()
@@ -287,7 +301,7 @@ func _process(delta: float) -> void:
 	if _is_paused:
 		return
 
-	if _current_phase == "rotate": # or _current_phase == "result":
+	if _current_phase == "rotate":
 		_cam_yaw   += delta * _cam_yaw_speed
 		_cam_pitch += delta * _cam_pitch_speed
 		_cam_pitch = clamp(_cam_pitch, -0.35, 0.35)
@@ -295,6 +309,9 @@ func _process(delta: float) -> void:
 			_cam_pitch_speed *= -1.0
 		camera_pivot.rotation.y = _cam_yaw
 		camera_pivot.rotation.x = _cam_pitch
+
+	if _current_phase == "rotate" or _current_phase == "result":
+		_update_ball_labels()
 
 	match _current_phase:
 		"show":
@@ -367,12 +384,16 @@ func _on_ball_tapped(ball_id: int) -> void:
 		ball.set_state_deselected()
 		GameManager.selected_ball_ids.erase(ball_id)
 		_selected_count -= 1
+		if ball_id < _ball_labels.size():
+			_set_label_state(_ball_labels[ball_id], "normal")
 	else:
 		if _selected_count >= target_count:
 			return
 		ball.set_state_selected()
 		GameManager.selected_ball_ids.append(ball_id)
 		_selected_count += 1
+		if ball_id < _ball_labels.size():
+			_set_label_state(_ball_labels[ball_id], "selected")
 	ui_confirm_btn.text = "Confirmer (%d/%d)" % [_selected_count, target_count]
 	_update_confirm_style(_selected_count == target_count)
 
@@ -463,3 +484,94 @@ func _update_rounds_ui() -> void:
 		else:
 			dot.color = Color(0.35, 0.35, 0.35)
 		ui_rounds_panel.add_child(dot)
+
+
+# ── Numérotation 2D des balles ─────────────────────────────────────────────
+
+func _create_ball_labels() -> void:
+	_remove_ball_labels()
+	_label_layer = CanvasLayer.new()
+	_label_layer.layer = 10
+	add_child(_label_layer)
+	_ball_labels.clear()
+	for i in balls.size():
+		var btn := Button.new()
+		btn.text = str(i + 1)
+		btn.custom_minimum_size = Vector2(LABEL_SIZE, LABEL_SIZE)
+		btn.size = Vector2(LABEL_SIZE, LABEL_SIZE)
+		btn.add_theme_font_size_override("font_size", 20)
+		btn.add_theme_color_override("font_color", Color.WHITE)
+		_set_label_state(btn, "normal")
+		btn.pressed.connect(_on_ball_label_pressed.bind(i))
+		_label_layer.add_child(btn)
+		_ball_labels.append(btn)
+
+
+func _remove_ball_labels() -> void:
+	if _label_layer:
+		_label_layer.queue_free()
+		_label_layer = null
+	_ball_labels.clear()
+
+
+func _update_ball_labels() -> void:
+	if _ball_labels.is_empty() or not is_instance_valid(_label_layer):
+		return
+	for i in balls.size():
+		if i >= _ball_labels.size():
+			break
+		var ball = balls[i]
+		var btn: Button = _ball_labels[i]
+		var screen_pos: Vector2 = camera.unproject_position(ball.global_position)
+		btn.position = screen_pos + Vector2(-LABEL_SIZE * 0.5, -LABEL_SIZE * 0.5 - 54.0)
+		var to_ball: Vector3 = ball.global_position - camera.global_position
+		btn.visible = to_ball.dot(-camera.global_transform.basis.z) > 0.0
+
+
+func _set_label_state(btn: Button, state: String) -> void:
+	var r := int(LABEL_SIZE * 0.5)
+	for s_name in ["normal", "hover", "pressed", "focus", "disabled"]:
+		var s := StyleBoxFlat.new()
+		s.corner_radius_top_left = r
+		s.corner_radius_top_right = r
+		s.corner_radius_bottom_left = r
+		s.corner_radius_bottom_right = r
+		s.border_width_top = 2
+		s.border_width_bottom = 2
+		s.border_width_left = 2
+		s.border_width_right = 2
+		match state:
+			"normal":
+				s.bg_color = Color(0.06, 0.06, 0.16, 0.92)
+				s.border_color = Color(0.85, 0.85, 1.0, 0.80) if s_name == "normal" else Color(1.0, 1.0, 1.0, 1.0)
+			"selected":
+				s.bg_color = Color(0.04, 0.38, 0.90, 0.95) if s_name == "normal" else Color(0.06, 0.46, 1.0, 0.95)
+				s.border_color = Color(0.45, 0.80, 1.0, 1.0)
+			"correct":
+				s.bg_color = Color(0.07, 0.60, 0.14, 0.95)
+				s.border_color = Color(0.3, 1.0, 0.45, 1.0)
+			"wrong":
+				s.bg_color = Color(0.75, 0.08, 0.06, 0.95)
+				s.border_color = Color(1.0, 0.3, 0.25, 1.0)
+		btn.add_theme_stylebox_override(s_name, s)
+
+
+func _on_ball_label_pressed(ball_id: int) -> void:
+	if _current_phase == "rotate":
+		_on_ball_tapped(ball_id)
+
+
+# ── Design helpers ─────────────────────────────────────────────────────────
+
+func _style_phase_label() -> void:
+	ui_phase_label.add_theme_font_size_override("font_size", 26)
+	ui_phase_label.add_theme_color_override("font_color", Color(1.0, 0.92, 0.30))
+	ui_phase_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0))
+	ui_phase_label.add_theme_constant_override("outline_size", 7)
+
+
+func _style_speed_label() -> void:
+	ui_speed_label.add_theme_font_size_override("font_size", 18)
+	ui_speed_label.add_theme_color_override("font_color", Color(0.75, 0.95, 1.0))
+	ui_speed_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0))
+	ui_speed_label.add_theme_constant_override("outline_size", 5)

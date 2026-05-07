@@ -32,8 +32,8 @@ func _ready() -> void:
 	var sphere := SphereMesh.new()
 	sphere.radius = BALL_RADIUS
 	sphere.height = BALL_RADIUS * 2.0
-	sphere.radial_segments = 32
-	sphere.rings = 16
+	sphere.radial_segments = 16
+	sphere.rings = 8
 	mesh_instance.mesh = sphere
 	_visual_root.add_child(mesh_instance)
 
@@ -79,8 +79,8 @@ func _add_torus_vertical(y_rot: float) -> void:
 	var t := TorusMesh.new()
 	t.inner_radius = BALL_RADIUS - 0.008
 	t.outer_radius = BALL_RADIUS + 0.008
-	t.rings = 40
-	t.ring_segments = 12
+	t.rings = 20
+	t.ring_segments = 8
 	node.mesh = t
 	node.rotation_degrees = Vector3(90.0, y_rot, 0.0)
 	node.material_override = _stripe_mat
@@ -94,7 +94,7 @@ func _add_ring(y_pos: float) -> void:
 	c.top_radius    = r
 	c.bottom_radius = r
 	c.height        = 0.02
-	c.radial_segments = 96
+	c.radial_segments = 24
 	c.rings = 1
 	node.mesh = c
 	node.position.y = y_pos
